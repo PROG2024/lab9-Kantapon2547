@@ -8,15 +8,29 @@
    1. in Counter, do not use any static methods except __new__.
       You may not have a __new__ depending on how you implement the singleton.
 """
+import logging
+
 
 class Counter:
+    _instance = None
 
     def __init__(self):
-        self.__count = 0
+        logging.info("Initializing Counter")
 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._count = 0
+            logging.info(f"Initializing Counter with count '{cls._instance._count}'")
+        return cls._instance
+
+    @property
+    def count(self):
+        return self._count
+
+    def increment(self):
+        self._count += 1
+        return self._count
 
     def __str__(self):
-        return f"{self.__count}"
-
-    #TODO write count property
-    #TODO write increment method
+        return f"{self._count}"
